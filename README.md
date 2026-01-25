@@ -45,3 +45,27 @@ npm run dev
 ```
 5. Open your browser and navigate to
 http://localhost:5173
+
+## Available Scripts
+
+- `npm run dev` - Start the development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview the production build
+- `npm run lint` - Run ESLint to check code quality
+
+## Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Contact
+
+For questions or feedback, please reach out through GitHub issues.
+
+---
+
+Made with ❤️
+
