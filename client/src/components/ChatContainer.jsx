@@ -27,7 +27,7 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
           alt=""
           className="md:hidden max-w-7"
         />
-        <img src={assets.help_icon} alt="" className="md:hidden max-w-5" />
+        <img src={assets.help_icon} alt="" className="max-md:hidden max-w-5" />
       </div>
       {/* Chat Messages */}
       <div className="flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-3 pb-6">
@@ -72,6 +72,30 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
           </div>
         ))}
         <div ref={scrollEnd}></div>
+      </div>
+
+      {/* Chat Input */}
+      <div className="absolute bottom-0 left-0 right-0 p-3 flex items-center gap-3">
+        <div className="flex-1 flex items-center bg-gray-100/12 rounded-full px-3">
+          <input
+            type="text"
+            placeholder="Type your message..."
+            className="flex-1 p-3 text-sm border-none rounded-lg outline-none text-white placeholder-gray-400"
+          />
+          <input type="file" id="image" accept="image/*" hidden />
+          <label htmlFor="image">
+            <img
+              src={assets.gallery_icon}
+              alt=""
+              className="w-5 mr-2 cursor-pointer"
+            />
+          </label>
+        </div>
+        <img
+          src={assets.send_button}
+          alt="Send"
+          className="w-7 cursor-pointer"
+        />
       </div>
     </div>
   ) : (
