@@ -1,7 +1,16 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import assets, { messagesDummyData } from "../assets/assets";
+import { formatMessageTime } from "../lib/utils";
 
 const ChatContainer = ({ selectedUser, setSelectedUser }) => {
+  const scrollEnd = useRef();
+
+  useEffect(() => {
+    if (scrollEnd.current) {
+      scrollEnd.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, []);
+
   return selectedUser ? (
     <div className="h-full overflow-scroll relative backdrop-blur-lg">
       {/* Chat Header */}
@@ -37,19 +46,32 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
               />
             ) : (
               <p
-                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-8 break-all bg-violet-500/30 text-white ${msg.senderId ==="680f50e4f10f3cd28382ecf9" ?
-                  "rounded-br-none"
-                  : "rounded-bl-none bg-[#3a3a5c]/50"
+                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-8 break-all bg-violet-500/30 text-white ${
+                  msg.senderId === "680f50e4f10f3cd28382ecf9"
+                    ? "rounded-br-none"
+                    : "rounded-bl-none bg-[#3a3a5c]/50"
                 }`}
               >
                 {msg.text}
               </p>
             )}
-            <div>
-              
+            <div className="text-center text-xs">
+              <img
+                src={
+                  msg.senderId === "680f50e4f10f3cd28382ecf9"
+                    ? assets.avatar_icon
+                    : assets.profile_martin
+                }
+                alt=""
+                className="w-7 rounded-full"
+              />
+              <p className="text-gray-500">
+                {formatMessageTime(msg.createdAt)}
+              </p>
             </div>
           </div>
         ))}
+        <div ref={scrollEnd}></div>
       </div>
     </div>
   ) : (
