@@ -21,6 +21,12 @@ const RightSidebar = ({ selectedUser }) => {
           </h1>
           <p className="px-10 mx-auto">{selectedUser.bio}</p>
         </div>
+
+        <hr className="border-[#ffffff50] my-4" />
+
+        <div className="px-5 text-xs">
+
+        </div>
       </div>
     )
   );
