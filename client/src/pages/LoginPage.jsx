@@ -55,6 +55,10 @@ const LoginPage = () => {
             />
           </>
         )}
+
+        {currState === "Sign up" && !isDataSubmitted && (
+          <textarea rows={4} className="p-2 border border-gray-500 focus:outline-none rounded-md focus:ring-2 focus:ring-indigo-500" placeholder="Provide a short bio" required></textarea>
+        )}
       </form>
     </div>
   );
