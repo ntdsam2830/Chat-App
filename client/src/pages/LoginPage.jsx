@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import assets from "../assets/assets";
+import { set } from "mongoose";
 
 const LoginPage = () => {
   const [currState, setCurrState] = useState("Sign up"); // login or register
@@ -11,16 +12,36 @@ const LoginPage = () => {
   const [bio, setBio] = useState(""); // bio state
   const [isDataSubmitted, setIsDataSubmitted] = useState(false); // data submission state
 
+  const onSubmitHandler = (e) => {
+    e.preventDefault();
+
+    if (currState === "Sign up" && !isDataSubmitted) {
+      setIsDataSubmitted(true);
+      return;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-cover bg-center flex items-center justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl">
       {/* Left section */}
       <img src={assets.logo_big} alt="" className="w-[min(30vw,250px)]" />
 
       {/* Right section */}
-      <form className="flex flex-col gap-6 border-2 bg-white/8 text-white border-gray-500 p-6 rounded-lg shadow-lg ">
+      <form
+        onSubmit={onSubmitHandler}
+        className="flex flex-col gap-6 border-2 bg-white/8 text-white border-gray-500 p-6 rounded-lg shadow-lg "
+      >
+        {/* <h2 className="font-medium text-2xl flex justify-center items-center"> */}
         <h2 className="font-medium text-2xl flex justify-between items-center">
           {currState}
-          <img src={assets.arrow_icon} alt="" className="w-5 cursor-pointer" />
+          {isDataSubmitted && (
+            <img
+              onClick={() => setIsDataSubmitted(false)}
+              src={assets.arrow_icon}
+              alt=""
+              className="w-5 cursor-pointer"
+            />
+          )}
         </h2>
 
         {currState === "Sign up" && !isDataSubmitted && (
@@ -28,7 +49,7 @@ const LoginPage = () => {
             onChange={(e) => setFullName(e.target.value)}
             value={fullName}
             type="text"
-            className="p-2 border border-gray-500 focus:outline-none rounded-md"
+            className="p-2 border border-gray-500 focus:outline-none rounded-md focus:ring-2 focus:ring-indigo-500"
             placeholder="Full Name"
             required
           />
@@ -56,9 +77,58 @@ const LoginPage = () => {
           </>
         )}
 
-        {currState === "Sign up" && !isDataSubmitted && (
-          <textarea rows={4} className="p-2 border border-gray-500 focus:outline-none rounded-md focus:ring-2 focus:ring-indigo-500" placeholder="Provide a short bio" required></textarea>
+        {currState === "Sign up" && isDataSubmitted && (
+          <textarea
+            onChange={(e) => setBio(e.target.value)}
+            value={bio}
+            rows={4}
+            className="p-2 border border-gray-500 focus:outline-none rounded-md focus:ring-2 focus:ring-indigo-500"
+            placeholder="Provide a short bio..."
+            required
+          ></textarea>
         )}
+
+        <button
+          type="submit"
+          className="py-3 bg-gradient-to-r from-purple-400 to-violet-600 text-white rounded-md cursor-pointer"
+        >
+          {currState === "Sign up" ? "Create Account" : "Login Now"}
+        </button>
+
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <input type="checkbox" />
+          <p>Agree to the terms of use and privacy policy. </p>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          {currState === "Sign up" ? (
+            <p className="text-sm text-gray-600">
+              Already have an account?{" "}
+              <span
+                onClick={() => {
+                  setCurrState("Login");
+                  setIsDataSubmitted(false);
+                }}
+                className="font-medium text-violet-500 cursor-pointer"
+              >
+                Login here
+              </span>
+            </p>
+          ) : (
+            <p className="text-sm text-gray-600">
+              Don't have an account?{" "}
+              <span
+                onClick={() => {
+                  setCurrState("Sign up");
+                  setIsDataSubmitted(false);
+                }}
+                className="font-medium text-violet-500 cursor-pointer"
+              >
+                Sign Up
+              </span>
+            </p>
+          )}
+        </div>
       </form>
     </div>
   );
