@@ -1,3 +1,4 @@
+import { generateToken } from "../lib/utils.js";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 
@@ -31,16 +32,57 @@ export const signUp = async (req, res) => {
       profilePic,
       bio,
     });
+
+    const token = generateToken(newUser._id);
+
     res.status(201).json({
       success: true,
-      message: "User created successfully",
-      user: newUser,
+      userData: newUser,
+      message: "Account created successfully",
+      token,
     });
-
-    const token 
-
   } catch (error) {
-    console.error("Error during sign up:", error);
-    res.status(500).json({ message: "Server error during sign up" });
+    console.error("Error during sign up:", error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message || "An error occurred during sign up",
+    });
+  }
+};
+
+//Sign in existing user
+export const signIn = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const userData = await User.findOne({ email });
+    if (!userData) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, userData.password);
+    if (!isPasswordMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    const token = generateToken(userData._id);
+
+    res.status(200).json({
+      success: true,
+      userData,
+      token,
+      message: "Login successful",
+    });
+  } catch (error) {
+    console.error("Error during login:", error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message || "An error occurred during login",
+    });
   }
 };
