@@ -4,6 +4,7 @@ import http from "http";
 import "dotenv/config";
 import { connect } from "http2";
 import connectDB from "./lib/db.js";
+import userRouter from "./routes/userRoutes.js";
 
 //Create Express app and HTTP server
 const app = express();
@@ -13,9 +14,11 @@ const server = http.createServer(app);
 app.use(cors());
 app.use(express.json({ limit: "4mb" }));
 
+//Routes setup
 app.use("/api/status", (req, res) => {
   res.send({ message: "Server is running!" });
 });
+app.use("/api/auth", userRouter);
 
 //Connect to the database
 await connectDB();
