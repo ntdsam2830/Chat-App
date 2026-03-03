@@ -1,5 +1,6 @@
 import { message } from "antd";
-import Message from "../models/Message";
+import Message from "../models/Message.js";
+import cloudinary from "../lib/cloudinary.js";
 
 //Get all users except the current user
 export const getUsersForSidebar = async (req, res) => {
@@ -79,6 +80,39 @@ export const markMessageAsSeen = async (req, res) => {
       success: false,
       message:
         error.message || "An error occurred while marking message as seen",
+    });
+  }
+};
+
+//Send message to selected user
+export const sendMessage = async (req, res) => {
+  try {
+    const { text, image } = req.body;
+    const senderId = req.user._id;
+    const receiverId = req.params.id;
+
+    let imageUrl = "";
+    if (image) {
+      const upload = await cloudinary.uploader.upload(image);
+      imageUrl = upload.secure_url;
+    }
+
+    const newMessage = await Message.create({
+      senderId,
+      receiverId,
+      text,
+      image: imageUrl,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Message sent successfully",
+      newMessage,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || "An error occurred while sending message",
     });
   }
 };
