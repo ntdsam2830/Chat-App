@@ -1,6 +1,6 @@
-import { message } from "antd";
 import Message from "../models/Message.js";
 import cloudinary from "../lib/cloudinary.js";
+import { io, userSocketMap } from "../server.js";
 
 //Get all users except the current user
 export const getUsersForSidebar = async (req, res) => {
@@ -103,6 +103,14 @@ export const sendMessage = async (req, res) => {
       text,
       image: imageUrl,
     });
+
+    //Emit the new message to the receiver if they are connected via WebSocket
+    const receiverSocketId = userSocketMap[receiverId];
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", {
+        message: newMessage,
+      });
+    }
 
     res.status(201).json({
       success: true,
