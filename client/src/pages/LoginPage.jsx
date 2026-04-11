@@ -5,7 +5,7 @@ import { AuthContext } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 
 const LoginPage = () => {
-  const [currState, setCurrState] = useState("Sign up"); // login or register
+  const [currState, setCurrState] = useState("Log in"); // login or register
   const [fullName, setFullName] = useState(""); // full name state
   const [email, setEmail] = useState(""); // email state
   const [password, setPassword] = useState(""); // password state

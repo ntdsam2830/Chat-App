@@ -1,17 +1,32 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import assets from "../assets/assets";
+import { AuthContext } from "../../context/AuthContext";
 
 const ProfilePage = () => {
+  const { authUser, updateProfile } = useContext(AuthContext);
+
   const [selectedImg, setSelectedImg] = useState(null);
-  const [name, setName] = useState("");
-  const [bio, setBio] = useState("");
+  const [name, setName] = useState(authUser?.fullName || "");
+  const [bio, setBio] = useState(authUser?.bio || "");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/");
+    if (!selectedImg) {
+      await updateProfile({ fullName: name, bio });
+      navigate("/");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Image = reader.result;
+      await updateProfile({ fullName: name, bio, profilePic: base64Image });
+      navigate("/");
+    };
+    reader.readAsDataURL(selectedImg);
     // Handle form submission logic here (e.g., send data to the server)
     // You can access the selected image, name, and bio from the state variables
   };
@@ -66,16 +81,15 @@ const ProfilePage = () => {
 
           <button
             className="bg-gradient-to-r from-purple-400 to-violet-600 text-white p-2 rounded-full text-lg cursor-pointer"
-            onClick={() => navigate("/")}
             type="submit"
           >
             Save
           </button>
         </form>
         <img
-          src={assets.logo_icon}
+          src={authUser?.profilePic || assets.logo_icon}
           alt=""
-          className="max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10"
+          className={`max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10 ${!selectedImg && "rounded-full"}`}
         />
       </div>
     </div>
