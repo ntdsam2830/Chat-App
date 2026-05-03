@@ -40,7 +40,7 @@ const ProfilePage = () => {
         >
           <h3 className="text-lg">Profile details</h3>
           <label
-            className="flex items-center gap-3 cursor-pointer"
+            className="flex items-center gap-3 cursor-pointer font-light"
             htmlFor="avatar"
           >
             <input
@@ -51,15 +51,15 @@ const ProfilePage = () => {
               hidden
             />
             <img
-              className={`w-12 h-12 ${selectedImg && "rounded-full"}`}
+              className={`w-12 h-12 rounded-full ${selectedImg && "rounded-full"}`}
               src={
                 selectedImg
                   ? URL.createObjectURL(selectedImg)
-                  : assets.avatar_icon
+                  : `${authUser?.profilePic}` || assets.avatar_icon
               }
               alt=""
             />
-            upload profile image
+            Upload profile image
           </label>
           <input
             onChange={(e) => setName(e.target.value)}
