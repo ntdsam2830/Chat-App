@@ -1,6 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import axios from "axios";
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import { AuthContext } from "./AuthContext.jsx";
 import toast from "react-hot-toast";
 
@@ -77,9 +76,30 @@ export const ChatProvider = ({ children }) => {
     });
   };
 
+  //function to unsubscribe from messages
+  const unsubscribeFromMessages = () => {
+    if (socket) socket.off("newMessage");
+  };
+
+  useEffect(() => {
+    subscribeToMessages();
+    return () => {
+      unsubscribeFromMessages();
+    };
+  }, [socket, selectedUser]);
+
   // Chat context logic here
   const value = {
     // Define the values to be provided to the context
+    messages,
+    users,
+    selectedUser,
+    unseenMessages,
+    getUsers,
+    setMessages,
+    setSelectedUser,
+    sendMessage,
+    setUnseenMessages,
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;

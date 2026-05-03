@@ -1,9 +1,41 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import assets, { messagesDummyData } from "../assets/assets";
 import { formatMessageTime } from "../lib/utils";
+import { ChatContext } from "../../context/ChatContext";
+import { AuthContext } from "../../context/AuthContext";
 
-const ChatContainer = ({ selectedUser, setSelectedUser }) => {
+const ChatContainer = () => {
+  const { messages, selectedUser, setSelectedUser, sendMessage, getMessages } =
+    useContext(ChatContext);
+
+  const { authUser, onlineUsers } = useContext(AuthContext);
+
   const scrollEnd = useRef();
+
+  const [input, setInput] = useState("");
+
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    await sendMessage({ text: input.trim() });
+    setInput("");
+  };
+
+  const handleSendImage = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !file.type.startsWith("image/")) {
+      alert("Please select an image file.");
+      return;
+    }
+    const reader = new FileReader();
+
+    reader.onloadend = async () => {
+      await sendMessage({ image: reader.result });
+      e.target.value = ""; // Clear the file input after sending the image
+    };
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
     if (scrollEnd.current) {
@@ -82,9 +114,18 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
             placeholder="Type your message..."
             className="flex-1 p-3 text-sm border-none rounded-lg outline-none text-white placeholder-gray-400"
           />
-          <input type="file" id="image" accept="image/*" hidden />
+          <input
+            onChange={(e) => setInput(e.target.value)}
+            value={input}
+            onKeyDown={(e) => (e.key === "Enter" ? handleSendMessage(e) : null)}
+            type="file"
+            id="image"
+            accept="image/*"
+            hidden
+          />
           <label htmlFor="image">
             <img
+              onClick={handleSendImage}
               src={assets.gallery_icon}
               alt=""
               className="w-5 mr-2 cursor-pointer"
@@ -92,6 +133,7 @@ const ChatContainer = ({ selectedUser, setSelectedUser }) => {
           </label>
         </div>
         <img
+          onClick={handleSendMessage}
           src={assets.send_button}
           alt="Send"
           className="w-7 cursor-pointer"
