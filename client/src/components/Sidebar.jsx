@@ -78,7 +78,13 @@ const Sidebar = () => {
       <div className="flex flex-col">
         {filteredUsers.map((user, index) => (
           <div
-            onClick={() => setSelectedUser(user)}
+            onClick={() => {
+              setSelectedUser(user);
+              setUnseenMessages((prevUnseenMessages) => ({
+                ...prevUnseenMessages,
+                [user._id]: 0,
+              }));
+            }}
             key={index}
             className={`relative flex items-center gap-2 p-2 pl-4 cursor-pointer rounded max-sm:text-sm ${
               selectedUser?._id === user._id && "bg-[#282142]/50"
