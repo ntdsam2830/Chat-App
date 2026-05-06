@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     if (token) {
       try {
+        axios.defaults.headers.common["token"] = token;
         const { data } = await axios.get("/api/auth/check-auth");
         if (data.success) {
           setAuthUser(data.user);

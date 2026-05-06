@@ -12,15 +12,13 @@ export const getUsersForSidebar = async (req, res) => {
     );
     const unseenMessages = {};
     const promises = filteredUsers.map(async (user) => {
-      const messages = await Message.find({
+      const count = await Message.countDocuments({
         senderId: user._id,
         receiverId: userId,
         seen: false,
-      })
-        .sort({ createdAt: -1 })
-        .limit(1);
-      if (messages.length > 0) {
-        unseenMessages[user._id] = messages.length;
+      });
+      if (count > 0) {
+        unseenMessages[user._id] = count;
       }
     });
     await Promise.all(promises);

@@ -31,7 +31,11 @@ export const ChatProvider = ({ children }) => {
       const { data } = await axios.get(`/api/messages/${userId}`);
       if (data.success) {
         setMessages(data.messages);
-        setSelectedUser(userId);
+        // Clear the unseen messages count for this user
+        setUnseenMessages((prevUnseenMessages) => ({
+          ...prevUnseenMessages,
+          [userId]: 0,
+        }));
       }
     } catch (error) {
       toast.error("Error fetching messages:" + error.message);
@@ -59,6 +63,7 @@ export const ChatProvider = ({ children }) => {
   //function to subscribe to message for selected user
   const subscribeToMessages = async () => {
     if (!socket) return;
+    
     socket.on("newMessage", (newMessage) => {
       if (selectedUser && newMessage.senderId === selectedUser._id) {
         newMessage.seen = true; // Mark the message as seen if it's from the selected user
@@ -96,7 +101,7 @@ export const ChatProvider = ({ children }) => {
     selectedUser,
     unseenMessages,
     getUsers,
-    setMessages,
+    getMessages,
     setSelectedUser,
     sendMessage,
     setUnseenMessages,
