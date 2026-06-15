@@ -1,9 +1,23 @@
-import React, { useContext } from "react";
-import assets, { imagesDummyData } from "../assets/assets";
+import React, { useContext, useState, useEffect } from "react";
+import assets from "../assets/assets";
 import { AuthContext } from "../../context/AuthContext";
+import { ChatContext } from "../../context/ChatContext";
 
-const RightSidebar = ({ selectedUser }) => {
-  const { logout } = useContext(AuthContext);
+const RightSidebar = () => {
+  const { logout, onlineUsers } = useContext(AuthContext);
+  const { selectedUser, messages } = useContext(ChatContext);
+
+  const [msgImages, setMsgImages] = useState([]);
+
+  //Get all the images from messages of selected user and set them to state
+  useEffect(() => {
+    setMsgImages(
+      messages
+        .filter((msg) => msg.image)
+        .map((msg) => msg.image)
+        .reverse(),
+    );
+  }, [messages]);
 
   return (
     selectedUser && (
@@ -19,7 +33,9 @@ const RightSidebar = ({ selectedUser }) => {
             className="w-20 aspect-[1/1] rounded-full"
           />
           <h1 className="px-10 text-xl font-medium mx-auto flex items-center gap-2">
-            <p className="w-2 h-2 rounded-full bg-green-500"></p>
+            {onlineUsers.includes(selectedUser._id) && (
+              <p className="w-2 h-2 rounded-full bg-green-500"></p>
+            )}
             {selectedUser.fullName}
           </h1>
           <p className="px-10 mx-auto">{selectedUser.bio}</p>
@@ -30,7 +46,7 @@ const RightSidebar = ({ selectedUser }) => {
         <div className="px-5 text-xs">
           <p>Media</p>
           <div className="mt-2 max-h-[200px] overflow-y-scroll grid grid-cols-2 gap-4 opacity-80">
-            {imagesDummyData.map((imgSrc, index) => (
+            {msgImages.map((imgSrc, index) => (
               <div
                 key={index}
                 onClick={() => window.open(imgSrc, "_blank")}
@@ -47,7 +63,7 @@ const RightSidebar = ({ selectedUser }) => {
         </div>
 
         <button
-          onClick={logout}
+          onClick={() => logout()}
           className="absolute bottom-5 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-400 to-violet-600 text-white border-none text-sm font-light cursor-pointer py-2 px-20 rounded-full hover:from-purple-200 hover:to-violet-900 transition-colors duration-200"
         >
           Logout
