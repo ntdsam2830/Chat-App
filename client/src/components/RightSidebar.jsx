@@ -45,7 +45,7 @@ const RightSidebar = () => {
 
         <div className="px-5 text-xs">
           <p>Media</p>
-          <div className="mt-2 max-h-[200px] overflow-y-scroll grid grid-cols-2 gap-4 opacity-80">
+          <div className="mt-2 md:max-h-[250px] xl:max-h-[350px] 2xl:min-h-[450px] overflow-y-scroll grid grid-cols-2 gap-4 opacity-80">
             {msgImages.map((imgSrc, index) => (
               <div
                 key={index}
@@ -55,7 +55,7 @@ const RightSidebar = () => {
                 <img
                   src={imgSrc}
                   alt={`Media ${index}`}
-                  className="h-full rounded-md"
+                  className="h-40 w-full object-cover rounded-md"
                 />
               </div>
             ))}
