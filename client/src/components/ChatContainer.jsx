@@ -89,7 +89,7 @@ const ChatContainer = () => {
               />
             ) : (
               <p
-                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-8 break-all bg-violet-500/30 text-white ${
+                className={`p-2 max-w-[200px] md:text-sm font-light rounded-lg mb-5 break-all bg-violet-500/30 text-white ${
                   msg.senderId === authUser._id
                     ? "rounded-br-none"
                     : "rounded-bl-none bg-[#3a3a5c]/50"
@@ -125,9 +125,7 @@ const ChatContainer = () => {
             placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) =>
-                e.key === "Enter" ? handleSendMessage(e) : null
-              }
+            onKeyDown={(e) => (e.key === "Enter" ? handleSendMessage(e) : null)}
             className="flex-1 p-3 text-sm border-none rounded-lg outline-none text-white placeholder-gray-400"
           />
           <input

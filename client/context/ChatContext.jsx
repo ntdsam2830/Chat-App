@@ -63,18 +63,31 @@ export const ChatProvider = ({ children }) => {
   //function to subscribe to message for selected user
   const subscribeToMessages = async () => {
     if (!socket) return;
-    
-    socket.on("newMessage", (newMessage) => {
-      if (selectedUser && newMessage.senderId === selectedUser._id) {
-        newMessage.seen = true; // Mark the message as seen if it's from the selected user
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-        axios.put(`/api/messages/mark/${newMessage._id}`); // Mark messages as seen in the backend
+
+    // Remove any existing listener to avoid duplicates
+    socket.off("newMessage");
+
+    socket.on("newMessage", (payload) => {
+      // Server sends { message: newMessage } — handle both shapes
+      const incoming = payload?.message || payload;
+      if (!incoming) return;
+
+      const senderId = String(incoming.senderId);
+
+      if (selectedUser && String(selectedUser._id) === senderId) {
+        // If the selected conversation is open, append message and mark seen
+        incoming.seen = true;
+        setMessages((prevMessages) => [...prevMessages, incoming]);
+        // mark this single message as seen on backend
+        axios.put(`/api/messages/mark/${incoming._id}`).catch(() => {});
+        // clear unseen counter for this user
+        setUnseenMessages((prev) => ({ ...prev, [senderId]: 0 }));
       } else {
-        // Handle unseen messages for other users
+        // Increment unseen count for other users
         setUnseenMessages((prevUnseenMessages) => ({
           ...prevUnseenMessages,
-          [newMessage.senderId]: prevUnseenMessages[newMessage.senderId]
-            ? prevUnseenMessages[newMessage.senderId] + 1
+          [senderId]: prevUnseenMessages[senderId]
+            ? prevUnseenMessages[senderId] + 1
             : 1,
         }));
       }
